@@ -2,3 +2,4 @@ include/SDL2/
 lib/
 *.dll
 *.exe
+.vscode/

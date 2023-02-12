@@ -25,7 +25,7 @@ void Game::loop()
         update(deltaTime/1000.0f);
         render();
         deltaTime = SDL_GetTicks() - timeValue;
-        if(deltaTime < FPS/1000) SDL_Delay(FPS/100-deltaTime);
+        if(deltaTime < 1000/FPS) SDL_Delay(1000/FPS-deltaTime);
         deltaTime = SDL_GetTicks() - timeValue;
     }
 }
@@ -42,8 +42,9 @@ void Game::input(float deltaTime)
     SDL_Event event; SDL_PollEvent(&event); if(event.type==SDL_QUIT) isRunning = false;
     const Uint8* keystates = SDL_GetKeyboardState(NULL);
     if(keystates[SDL_SCANCODE_ESCAPE]) isRunning = false;
-    if(keystates[SDL_SCANCODE_LEFT]) player.rectangle.x-=VELOCITY*deltaTime;
-    if(keystates[SDL_SCANCODE_RIGHT]) player.rectangle.x+=VELOCITY*deltaTime;
+    if(keystates[SDL_SCANCODE_LEFT]) player.rectangle.x-=player.horizonalVelocity*deltaTime;
+    if(keystates[SDL_SCANCODE_RIGHT]) player.rectangle.x+=player.horizonalVelocity*deltaTime;
+    if(keystates[SDL_SCANCODE_UP]&&player.isOnGround) player.jumpState = JUMP_LENGTH;
 }
 
 void Game::update(float deltaTime)
@@ -52,10 +53,20 @@ void Game::update(float deltaTime)
     {
         player.rectangle.y = HEIGHT-player.rectangle.h;
     }
-    else if(player.rectangle.y+player.rectangle.h<HEIGHT)
+    else if(player.rectangle.y+player.rectangle.h<HEIGHT&&player.jumpState<=0.f)
     {
         player.rectangle.y+=GRAVITATION*deltaTime;
     }
+
+    if(player.jumpState>0.f)
+    {
+        player.rectangle.y-=sin((player.jumpState/JUMP_LENGTH)*(PI/2))*player.jumpPower;
+        player.jumpState-=deltaTime;
+    }
+
+    if(player.rectangle.y==HEIGHT-player.rectangle.h) player.isOnGround = true;
+    else player.isOnGround = false;
+
     std::cout << player.rectangle.x << " " << player.rectangle.y << "\n";
 }
 
