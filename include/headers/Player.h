@@ -2,11 +2,13 @@
 #include <SDL_image.h>
 #include <tgmath.h>
 #include <iostream>
+#include <vector>
 #define WALKING_VELOCITY 200.0f
 #define SCALE 3.0f
 #define ANIMATION_LENGTH 0.25f
-#define JUMP_LENGTH 1.0f
-#define GRAVITY_ACCELERATION 1000.0f
+#define JUMP_LENGTH 0.5f
+#define JUMP_POWER 1000.0f
+#define GRAVITY_ACCELERATION 1750.0f
 
 class Player
 {

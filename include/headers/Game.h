@@ -18,5 +18,6 @@ class Game
     SDL_Window*window;
     SDL_Renderer*renderer;
     SDL_Texture*playerTexture;
+    std::vector<SDL_FRect> platform;
     Player player;
 };

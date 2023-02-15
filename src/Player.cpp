@@ -6,7 +6,7 @@ Player::Player(SDL_Texture*texture)
 {
     this->texture = texture;
     position = {0.0f, 0.0f};
-    collider.w = 7.0f*SCALE;
+    collider.w = 8.0f*SCALE;
     collider.h = 14.0f*SCALE;
     setState(0);
     dst.w = src.w*SCALE;
@@ -39,14 +39,24 @@ void Player::update(float deltaTime)
         case 2: setState(0); break;
         case 3: setState(2); break;
     }
-    // GRAVITATION
-    if(canGoDown) gravityVelocity += GRAVITY_ACCELERATION*deltaTime;
+    //JUMPING
+    if(!canGoUp) jumpTimer = 0.0f;
+    if(jumpTimer>0.0f)
+    {
+        position.y-=JUMP_POWER*deltaTime*sin(jumpTimer/JUMP_LENGTH);
+        jumpTimer-=deltaTime;
+    }
+    // FALLING
+    if(canGoDown&&jumpTimer<=0.0f) gravityVelocity += GRAVITY_ACCELERATION*deltaTime;
     else gravityVelocity = 0.0f;
     position.y += gravityVelocity*deltaTime;
+    // JUMPING AND FALLING ANIMATION
+    if(canGoDown) setState(3);
     // SETTING POSITION OF TEXTURE AND COLLIDER
     collider.x = position.x;
     collider.y = position.y;
-    dst.x = position.x-(2.0f*SCALE);
+    if(isTurnedRight) dst.x = position.x-(2.0f*SCALE);
+    else dst.x = position.x-(3.0f*SCALE);
     dst.y = position.y;
 }
 
@@ -73,7 +83,7 @@ void Player::goRight()
 
 void Player::jump()
 {
-    jumpTimer = JUMP_LENGTH;
+    if(!canGoDown) jumpTimer = JUMP_LENGTH;
 }
 
 void Player::setPositionX(float value)
