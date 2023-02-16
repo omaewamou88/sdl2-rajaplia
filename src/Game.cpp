@@ -16,6 +16,7 @@ void Game::init()
     player = Player(playerTexture);
     platform.push_back({200.0f, 680.0f, 200.0f, 50.0f});
     platform.push_back({500.0f, 500.0f, 200.0f, 50.0f});
+    platform.push_back({850.0f, 300.0f, 200.0f, 50.0f});
 }
 
 void Game::loop()
@@ -91,28 +92,28 @@ void Game::update(float deltaTime)
     {
         // UP
         x1 = rect.x + 1.0f; y1 = rect.y + rect.h + 1.0f; x2 = rect.x + rect.w - 1.0f; y2 = rect.y + rect.h + 1.0f;
-        if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2))
+        if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2)&&player.checkIfJumps())
         {
             player.setCanGoUp(false);
             player.setPositionY(rect.y + rect.h);
         }
         // DOWN
         x1 = rect.x + 1.0f; y1 = rect.y - 1.0f; x2 = rect.x + rect.w - 1.0f; y2 = rect.y - 1.0f; 
-        if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2))
+        if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2)&&player.chechkIfIsFalling())
         {
             player.setCanGoDown(false);
             player.setPositionY(y1-player.getCollider().h+1.0f);
         }
         // LEFT
         x1 = rect.x + rect.w + 1.0f; y1 = rect.y + 1.0f; x2 = rect.x + rect.w + 1.0f; y2 = rect.y + rect.h - 1.0f;
-        if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2))
+        if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2)&&player.checkIfGoesLeft())
         {
             player.setCanGoLeft(false);
             player.setPositionX(rect.x + rect.w);
         }
         // RIGHT
         x1 = rect.x - 1.0f; y1 = rect.y + 1.0f; x2 = rect.x - 1.0f; y2 = rect.y + rect.h - 1.0f;
-        if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2))
+        if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2)&&player.checkIfGoesRight())
         {
             player.setCanGoRight(false);
             player.setPositionX(rect.x - player.getCollider().w);
@@ -127,8 +128,8 @@ void Game::render()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-    player.renderCollider(renderer);
+    // SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    // player.renderCollider(renderer);
     player.render(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     for(SDL_FRect rect : platform) SDL_RenderFillRectF(renderer, &rect);

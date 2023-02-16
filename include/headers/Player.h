@@ -29,9 +29,12 @@ class Player
     void setCanGoRight(bool value);
     SDL_FRect getCollider();
     SDL_FRect*getColliderPointer();
+    bool checkIfGoesLeft();
+    bool checkIfGoesRight();
+    bool checkIfJumps();
+    bool chechkIfIsFalling();
     private:
     void setState(uint8_t index);
-    // uint8_t getState();
     SDL_Texture*texture;
     SDL_FPoint position;
     SDL_FRect collider;

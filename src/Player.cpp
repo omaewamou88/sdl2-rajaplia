@@ -126,6 +126,26 @@ SDL_FRect*Player::getColliderPointer()
     return &collider;
 }
 
+bool Player::checkIfGoesLeft()
+{
+    return goesLeft;
+}
+
+bool Player::checkIfGoesRight()
+{
+    return goesRight;
+}
+
+bool Player::chechkIfIsFalling()
+{
+    return canGoDown;
+}
+
+bool Player::checkIfJumps()
+{
+    return jumpTimer>0.0f;
+}
+
 void Player::setState(uint8_t index)
 {
     switch(index)
@@ -144,16 +164,3 @@ void Player::setState(uint8_t index)
             break;
     }
 }
-
-// uint8_t Player::getState()
-// {
-//     if(src.x == 1 && src.y == 18) return 0;
-//     else if(src.x == 17 && src.y == 17) return 1;
-//     else if(src.x == 49 && src.y == 17) return 2;
-//     else if(src.x == 17 && src.y == 65) return 3;
-//     else
-//     {
-//         SDL_Log("ERROR - Player::getState() - 1");
-//         return -1;
-//     }
-// }
