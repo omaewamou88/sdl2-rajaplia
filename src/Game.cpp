@@ -13,10 +13,9 @@ void Game::init()
     window = SDL_CreateWindow("Rajaplia", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     playerTexture = IMG_LoadTexture(renderer, "res/player.png");
+    tileTexture = IMG_LoadTexture(renderer, "res/tiles.png");
     player = Player(playerTexture);
-    platform.push_back({200.0f, 680.0f, 200.0f, 50.0f});
-    platform.push_back({500.0f, 500.0f, 200.0f, 50.0f});
-    platform.push_back({850.0f, 300.0f, 200.0f, 50.0f});
+    platform.push_back(Platform(tileTexture, {240.0f, 576.0f}, 8, 3));
 }
 
 void Game::loop()
@@ -88,35 +87,35 @@ void Game::update(float deltaTime)
         player.setPositionX(WIDTH-player.getCollider().w);
     }
     // LOOP
-    for(SDL_FRect rect : platform)
+    for(Platform p : platform)
     {
         // UP
-        x1 = rect.x + 1.0f; y1 = rect.y + rect.h + 1.0f; x2 = rect.x + rect.w - 1.0f; y2 = rect.y + rect.h + 1.0f;
+        x1 = p.getRectangle().x + 1.0f; y1 = p.getRectangle().y + p.getRectangle().h + 1.0f; x2 = p.getRectangle().x + p.getRectangle().w - 1.0f; y2 = p.getRectangle().y + p.getRectangle().h + 1.0f;
         if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2)&&player.checkIfJumps())
         {
             player.setCanGoUp(false);
-            player.setPositionY(rect.y + rect.h);
+            player.setPositionY(p.getRectangle().y + p.getRectangle().h);
         }
         // DOWN
-        x1 = rect.x + 1.0f; y1 = rect.y - 1.0f; x2 = rect.x + rect.w - 1.0f; y2 = rect.y - 1.0f; 
+        x1 = p.getRectangle().x + 1.0f; y1 = p.getRectangle().y - 1.0f; x2 = p.getRectangle().x + p.getRectangle().w - 1.0f; y2 = p.getRectangle().y - 1.0f; 
         if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2)&&player.chechkIfIsFalling())
         {
             player.setCanGoDown(false);
             player.setPositionY(y1-player.getCollider().h+1.0f);
         }
         // LEFT
-        x1 = rect.x + rect.w + 1.0f; y1 = rect.y + 1.0f; x2 = rect.x + rect.w + 1.0f; y2 = rect.y + rect.h - 1.0f;
+        x1 = p.getRectangle().x + p.getRectangle().w + 1.0f; y1 = p.getRectangle().y + 1.0f; x2 = p.getRectangle().x + p.getRectangle().w + 1.0f; y2 = p.getRectangle().y + p.getRectangle().h - 1.0f;
         if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2)&&player.checkIfGoesLeft())
         {
             player.setCanGoLeft(false);
-            player.setPositionX(rect.x + rect.w);
+            player.setPositionX(p.getRectangle().x + p.getRectangle().w);
         }
         // RIGHT
-        x1 = rect.x - 1.0f; y1 = rect.y + 1.0f; x2 = rect.x - 1.0f; y2 = rect.y + rect.h - 1.0f;
+        x1 = p.getRectangle().x - 1.0f; y1 = p.getRectangle().y + 1.0f; x2 = p.getRectangle().x - 1.0f; y2 = p.getRectangle().y + p.getRectangle().h - 1.0f;
         if(SDL_IntersectFRectAndLine(player.getColliderPointer(), &x1, &y1, &x2, &y2)&&player.checkIfGoesRight())
         {
             player.setCanGoRight(false);
-            player.setPositionX(rect.x - player.getCollider().w);
+            player.setPositionX(p.getRectangle().x - player.getCollider().w);
         }
     }
 
@@ -132,6 +131,6 @@ void Game::render()
     // player.renderCollider(renderer);
     player.render(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    for(SDL_FRect rect : platform) SDL_RenderFillRectF(renderer, &rect);
+    for(Platform plat : platform) plat.render(renderer);
     SDL_RenderPresent(renderer);
 }

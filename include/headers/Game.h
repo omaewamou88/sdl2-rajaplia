@@ -1,5 +1,5 @@
-#include <Player.h>
-#define WIDTH 1280
+#include <Platform.h>
+#define WIDTH 1200
 #define HEIGHT 720
 #define FPS 60
 
@@ -18,6 +18,8 @@ class Game
     SDL_Window*window;
     SDL_Renderer*renderer;
     SDL_Texture*playerTexture;
-    std::vector<SDL_FRect> platform;
+    SDL_Texture*tileTexture;
+    std::vector<Platform> platform;
+    std::vector<SDL_FRect> rects;
     Player player;
 };
